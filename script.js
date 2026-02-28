@@ -237,6 +237,12 @@ function updateStepper() {
     const s = parseInt(li.dataset.step);
     li.classList.toggle("active", s === currentStep);
     li.classList.toggle("completed", s < currentStep);
+
+    if (s === currentStep) {
+      li.setAttribute("aria-current", "step");
+    } else {
+      li.removeAttribute("aria-current");
+    }
   });
 
   const fill = $("#progress-fill");
