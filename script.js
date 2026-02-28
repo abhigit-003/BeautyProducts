@@ -70,8 +70,8 @@ function bindRoleCards() {
     card.addEventListener("click", () => {
       const type = card.dataset.value;
       formData.business_type = type;
-      $all(".option-card[data-value='service_provider'], .option-card[data-value='destination']").forEach((c) => c.classList.remove("selected"));
-      card.classList.add("selected");
+      $all(".option-card[data-value='service_provider'], .option-card[data-value='destination']").forEach((c) => c.classList.remove("active"));
+      card.classList.add("active");
       saveDraft();
     });
   });
@@ -85,10 +85,10 @@ function bindCategoryCards() {
         const cat = card.dataset.value;
         if (formData.categories.includes(cat)) {
           formData.categories = formData.categories.filter((c) => c !== cat);
-          card.classList.remove("selected");
+          card.classList.remove("active");
         } else {
           formData.categories.push(cat);
-          card.classList.add("selected");
+          card.classList.add("active");
         }
         saveDraft();
       });
@@ -400,11 +400,11 @@ function loadDraft() {
 
     if (formData.business_type) {
       const card = $(`.option-card[data-value="${formData.business_type}"]`);
-      if (card) card.classList.add("selected");
+      if (card) card.classList.add("active");
     }
     formData.categories.forEach(cat => {
       const card = $(`.option-card[data-value="${cat}"]`);
-      if (card) card.classList.add("selected");
+      if (card) card.classList.add("active");
     });
 
     if ($("#fullName")) $("#fullName").value = formData.fullName || "";
