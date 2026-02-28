@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Provider Registration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="brand">
+          <div class="brand-mark">BP</div>
+          <div class="brand-text">
+            <span class="brand-name"><span class="brand-word brand-word-1">Beauty</span> <span class="brand-word brand-word-2">Partners</span></span>
+            <span class="brand-tagline">Onboard as a beauty provider</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-ghost">Help</button>
+        </div>
+      </header>
+
+      <main class="app-main">
+        <section class="side-panel left">
+          <div class="card summary-card">
+            <h3>Progress</h3>
+            <ul class="step-list">
+              <li data-step="1" class="active">
+                <span class="step-badge">1</span>
+                <div>
+                  <p class="step-title">Basic Info</p>
+                  <p class="step-sub">Business & personal details</p>
+                </div>
+              </li>
+              <li data-step="2">
+                <span class="step-badge">2</span>
+                <div>
+                  <p class="step-title">Portfolio & Contact</p>
+                  <p class="step-sub">Show your work & numbers</p>
+                </div>
+              </li>
+              <li data-step="3">
+                <span class="step-badge">3</span>
+                <div>
+                  <p class="step-title">Review & Terms</p>
+                  <p class="step-sub">Confirm all details</p>
+                </div>
+              </li>
+              <li data-step="4">
+                <span class="step-badge">4</span>
+                <div>
+                  <p class="step-title">Aadhar Verification</p>
+                  <p class="step-sub">Secure identity check</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="card registration-card">
+          <div class="card-header">
+            <div>
+              <h2 id="step-title">Basic Information</h2>
+              <!-- Subtitle removed as requested -->
+            </div>
+            <div class="progress-wrapper">
+              <span id="step-count" class="progress-label">Step 1 of 4</span>
+              <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <!-- Step 1: Basic Info - Business type, categories, experience, certification, personal details -->
+            <form id="step-1" class="step active" autocomplete="off">
+              <div class="form-grid">
+                <div class="form-field full">
+                  <label>Business type</label>
+                  <div class="option-card-grid two" id="roleCards">
+                    <button type="button" class="option-card" data-value="service_provider">
+                      <span class="option-card-title">Service Provider</span>
+                      <span class="option-card-sub">
+                        I provide beauty services to clients.
+                      </span>
+                    </button>
+                    <button type="button" class="option-card" data-value="destination">
+                      <span class="option-card-title">Destination</span>
+                      <span class="option-card-sub">
+                        I have a salon/studio location for appointments.
+                      </span>
+                    </button>
+                  </div>
+                  <p class="field-hint">Select one option.</p>
+                  <input type="hidden" id="roleInput" required />
+                  <p class="field-error" data-error-for="roleInput"></p>
+                </div>
+
+                <div class="form-field full">
+                  <label>Service categories</label>
+                  <div class="option-card-grid" id="categoriesCards">
+                    <button type="button" class="option-card" data-value="nailcare">
+                      <span class="option-card-title">Nailcare</span>
+                      <span class="option-card-sub">Nails, extensions, nail art.</span>
+                    </button>
+                    <button type="button" class="option-card" data-value="haircare">
+                      <span class="option-card-title">Haircare</span>
+                      <span class="option-card-sub">Cut, color, styling.</span>
+                    </button>
+                    <button type="button" class="option-card" data-value="henna">
+                      <span class="option-card-title">Henna</span>
+                      <span class="option-card-sub">Mehendi for events.</span>
+                    </button>
+                    <button type="button" class="option-card" data-value="facial">
+                      <span class="option-card-title">Facial</span>
+                      <span class="option-card-sub">Cleanup & facials.</span>
+                    </button>
+                    <button type="button" class="option-card" data-value="pedimani">
+                      <span class="option-card-title">Pedi/Mani</span>
+                      <span class="option-card-sub">Foot & hand care.</span>
+                    </button>
+                  </div>
+                  <p class="field-hint">Select one or more categories.</p>
+                  <input type="hidden" id="categoriesInput" required />
+                  <p class="field-error" data-error-for="categoriesInput"></p>
+                </div>
+
+                <div class="form-field">
+                  <label for="experienceSelect">Experience</label>
+                  <select id="experienceSelect" required>
+                    <option value="">Select experience</option>
+                    <option value="0">0 years</option>
+                    <option value="1">1 year</option>
+                    <option value="2">2 years</option>
+                    <option value="3">3 years</option>
+                    <option value="4">4 years</option>
+                    <option value="5">5 years</option>
+                    <option value="6">6 years</option>
+                    <option value="7">7 years</option>
+                    <option value="8">8 years</option>
+                    <option value="9">9 years</option>
+                    <option value="10">10+ years</option>
+                  </select>
+                  <p class="field-error" data-error-for="experienceSelect"></p>
+                </div>
+
+                <div class="form-field full">
+                  <label for="certification">Certification (optional)</label>
+                  <div class="file-drop drop-zone" data-file-target="certification">
+                    <input
+                      type="file"
+                      id="certification"
+                      accept=".jpg,.jpeg,.png,.pdf"
+                    />
+                    <p class="file-drop-title">Upload certificate</p>
+                    <p class="file-drop-subtitle">
+                      Drag & drop or click to upload. JPG, PNG or PDF (max 5 MB).
+                    </p>
+                  </div>
+                  <div id="certificationPreview" class="certification-preview"></div>
+                  <p class="field-hint">
+                    Optional, but it may help your profile get approved faster.
+                  </p>
+                </div>
+
+                <div class="form-divider full"><span>Personal details</span></div>
+
+                <div class="form-field full">
+                  <label for="fullName">Full name</label>
+                  <input
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    placeholder="Enter your full name"
+                    required
+                  />
+                  <p class="field-error" data-error-for="fullName"></p>
+                </div>
+
+                <div class="form-field">
+                  <label for="ageSelect">Age</label>
+                  <select id="ageSelect" required>
+                    <option value="">Select age</option>
+                  </select>
+                  <p class="field-error" data-error-for="ageSelect"></p>
+                </div>
+
+                <div class="form-field">
+                  <label for="genderSelect">Gender</label>
+                  <select id="genderSelect" required>
+                    <option value="">Select gender</option>
+                    <option value="female">Female</option>
+                    <option value="male">Male</option>
+                    <option value="nonbinary">Non-binary</option>
+                    <option value="prefer_not">Prefer not to say</option>
+                  </select>
+                  <p class="field-error" data-error-for="genderSelect"></p>
+                </div>
+              </div>
+            </form>
+
+            <!-- Step 2: Portfolio & Contact -->
+            <form id="step-2" class="step" autocomplete="off">
+              <div class="form-grid step2-grid">
+                <div class="step2-column">
+                  <div class="form-field full">
+                    <label>Portfolio images</label>
+                    <div
+                      class="file-drop"
+                      data-file-target="portfolio"
+                      data-multiple="true"
+                    >
+                      <input
+                        type="file"
+                        id="portfolio"
+                        accept=".jpg,.jpeg,.png,.webp"
+                        multiple
+                      />
+                      <p class="file-drop-title">Upload your best work</p>
+                      <p class="file-drop-subtitle">
+                        Add 3–10 high-quality images that represent your services.
+                      </p>
+                    </div>
+                    <div id="portfolioPreview" class="thumb-grid"></div>
+                    <p class="field-error" data-error-for="portfolio"></p>
+                  </div>
+                </div>
+
+                <div class="step2-column">
+                  <div class="form-divider full">
+                    <span>Contact numbers</span>
+                  </div>
+
+                  <div class="form-field">
+                    <label for="mobile1">Primary mobile number</label>
+                    <div class="input-with-prefix" role="group">
+                      <span class="input-prefix" aria-hidden="true">+91</span>
+                      <input
+                        type="tel"
+                        id="mobile1"
+                        name="mobile1"
+                        maxlength="10"
+                        inputmode="numeric"
+                        autocomplete="tel-national"
+                        placeholder="9876543210"
+                        required
+                      />
+                    </div>
+                    <p class="field-hint">
+                      This number will be used for booking confirmations and OTPs.
+                    </p>
+                    <p class="field-error" data-error-for="mobile1"></p>
+                  </div>
+
+                  <div class="form-field">
+                    <label for="mobile2">Secondary mobile number (optional)</label>
+                    <div class="input-with-prefix" role="group">
+                      <span class="input-prefix" aria-hidden="true">+91</span>
+                      <input
+                        type="tel"
+                        id="mobile2"
+                        name="mobile2"
+                        maxlength="10"
+                        inputmode="numeric"
+                        autocomplete="tel-national"
+                        placeholder="Alternate number"
+                      />
+                    </div>
+                    <p class="field-hint">
+                      Helpful if you have a salon landline or manager’s number.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </form>
+
+            <!-- Step 3: Review & Terms -->
+            <form id="step-3" class="step">
+              <div class="review-layout">
+                <div class="review-column">
+                  <h3>Profile overview</h3>
+                  <dl class="review-list" id="reviewProfile"></dl>
+
+                  <h3>Services</h3>
+                  <dl class="review-list" id="reviewServices"></dl>
+                </div>
+
+                <div class="review-column">
+                  <h3>Contact & Portfolio</h3>
+                  <dl class="review-list" id="reviewContact"></dl>
+                  <div class="review-portfolio">
+                    <div class="review-portfolio-header">
+                      <span>Portfolio preview</span>
+                      <span id="reviewPortfolioCount" class="badge badge-soft"></span>
+                    </div>
+                    <div id="reviewPortfolioThumbs" class="thumb-grid small"></div>
+                  </div>
+
+                  <div class="terms-box">
+                    <h4>Terms & Conditions</h4>
+                    <div class="terms-content">
+                      <p>
+                        By registering as a provider, you confirm that all information
+                        shared is accurate and that you are legally allowed to offer
+                        beauty services in your region.
+                      </p>
+                      <p>
+                        You agree to:
+                      </p>
+                      <ul>
+                        <li>Provide a clean and safe environment for clients.</li>
+                        <li>Use high-quality, hygienic products and tools.</li>
+                        <li>Respect client privacy and maintain professionalism.</li>
+                      </ul>
+                    </div>
+                    <label class="checkbox-row">
+                      <input type="checkbox" id="acceptTerms" />
+                      <span>I have read and agree to the terms and conditions.</span>
+                    </label>
+                    <p class="field-error" data-error-for="acceptTerms"></p>
+                  </div>
+                </div>
+              </div>
+            </form>
+
+            <!-- Step 4: Aadhar Verification -->
+            <form id="step-4" class="step">
+              <div class="form-grid">
+                <div class="form-field full">
+                  <label for="aadharNumber">Aadhar number</label>
+                  <input
+                    type="text"
+                    id="aadharNumber"
+                    name="aadharNumber"
+                    maxlength="14"
+                    placeholder="1234 5678 9012"
+                  />
+                  <p class="field-hint">
+                    We use this only for identity verification. It is encrypted and
+                    never shared publicly.
+                  </p>
+                  <p class="field-error" data-error-for="aadharNumber"></p>
+                </div>
+
+                <div class="form-field">
+                  <label>Aadhar card - front</label>
+                  <div class="file-drop" data-file-target="aadharFront">
+                    <input
+                      type="file"
+                      id="aadharFront"
+                      accept=".jpg,.jpeg,.png,.webp"
+                    />
+                    <p class="file-drop-title">Upload front side</p>
+                    <p class="file-drop-subtitle">
+                      Clear and readable image of the front side.
+                    </p>
+                  </div>
+                  <div id="aadharFrontPreview" class="thumb-grid small"></div>
+                  <p class="field-error" data-error-for="aadharFront"></p>
+                </div>
+
+                <div class="form-field">
+                  <label>Aadhar card - back</label>
+                  <div class="file-drop" data-file-target="aadharBack">
+                    <input
+                      type="file"
+                      id="aadharBack"
+                      accept=".jpg,.jpeg,.png,.webp"
+                    />
+                    <p class="file-drop-title">Upload back side</p>
+                    <p class="file-drop-subtitle">
+                      Clear and readable image of the back side.
+                    </p>
+                  </div>
+                  <div id="aadharBackPreview" class="thumb-grid small"></div>
+                  <p class="field-error" data-error-for="aadharBack"></p>
+                </div>
+
+                <div class="tips-banner full">
+                  <div class="tips-dot"></div>
+                  <div>
+                    <p class="tips-title">Tips for faster approval</p>
+                    <ul class="tips-list">
+                      <li>Ensure your Aadhaar number is correct and matches your card.</li>
+                      <li>Upload clear, readable images of both sides of your Aadhaar card.</li>
+                      <li>Make sure your name and details match your application.</li>
+                      <li>Check for any spelling errors before submitting.</li>
+                      <li>Use a valid mobile number for OTP verification.</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="info-banner full">
+                  <div class="info-dot"></div>
+                  <div>
+                    <p class="info-title">Demo verification only</p>
+                    <p class="info-text">
+                      This is a front-end demo. Actual Aadhar verification and secure
+                      storage must be implemented on a secure backend following UIDAI
+                      guidelines.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <footer class="card-footer">
+            <button id="backBtn" class="btn btn-ghost" type="button">
+              Back
+            </button>
+            <div class="footer-spacer"></div>
+            <button id="saveDraftBtn" class="btn btn-subtle" type="button">
+              Save draft
+            </button>
+            <button id="nextBtn" class="btn btn-primary" type="button">
+              Next step
+            </button>
+          </footer>
+        </section>
+
+        <!-- left sidebar now contains progress -->
+      </main>
+
+      <div id="toast" class="toast" aria-live="polite"></div>
+    </div>
+
+  </body>
+</html>
+
