@@ -256,6 +256,11 @@ function updateStepper() {
     const titles = ["Basic Information", "Portfolio & Contact", "Review & Terms", "Aadhar Verification"];
     title.textContent = titles[currentStep - 1] || "Registration";
   }
+
+  const nextBtn = $("#next-btn");
+  if (nextBtn) {
+    nextBtn.textContent = currentStep === 4 ? "Submit" : "Next step";
+  }
 }
 
 function validateStep(stepId) {
