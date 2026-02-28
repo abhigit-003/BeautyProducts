@@ -1,12 +1,12 @@
 /**
  * REFACTORED APP CONTROLLER (ENTRY POINT)
  */
-import { STEPS, MAX_FILE_SIZE_BYTES, PORTFOLIO_MAX } from "./js/config.js";
-import { $, $all, showToast, formatLabel } from "./js/utils.js";
-import { persist, hydrate } from "./js/storage.js";
-import { initCustomSelects, renderAadharPreview, populateAgeOptions } from "./js/ui.js";
-import { validationSchema, validateFile } from "./js/validation.js";
-import { serviceApi } from "./js/service-api.js";
+import { STEPS, MAX_FILE_SIZE_BYTES, PORTFOLIO_MAX } from "./js/config.js?v=3";
+import { $, $all, showToast, formatLabel } from "./js/utils.js?v=3";
+import { persist, hydrate } from "./js/storage.js?v=3";
+import { initCustomSelects, renderAadharPreview, populateAgeOptions } from "./js/ui.js?v=3";
+import { validationSchema, validateFile } from "./js/validation.js?v=3";
+import { serviceApi } from "./js/service-api.js?v=3";
 
 // App State
 let currentStep = 1;
@@ -31,7 +31,6 @@ const formData = {
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM Content Loaded - Initializing App");
-  loadDraft();
   initApp();
 });
 
@@ -39,7 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
 if (document.readyState === "complete" || document.readyState === "interactive") {
   if (!window.__app_initialized) {
     console.log("Direct Initializing (fallback)");
-    loadDraft();
     initApp();
   }
 }
@@ -49,7 +47,9 @@ function initApp() {
   window.__app_initialized = true;
 
   updateStepper();
-  populateAgeOptions();
+  populateAgeOptions(); // Must happen BEFORE loadDraft so options exist
+  loadDraft(); // Load saved state
+
   bindRoleCards();
   bindCategoryCards();
   bindStepButtons();
