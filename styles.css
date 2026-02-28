@@ -32,9 +32,14 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #faf5f0;
-  background: var(--page-bg);
+
+  /* Premium Image Background with Overlay */
+  background-color: var(--page-bg-subtle, #fdfbfb);
+  background-image: linear-gradient(rgba(253, 251, 251, 0.8), rgba(235, 237, 238, 0.85)), url('bg-beauty.jpg');
+  background-size: cover;
+  background-position: center;
   background-attachment: fixed;
+
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
