@@ -14,9 +14,8 @@ const formData = {
   business_type: "",
   categories: [],
   experienceSelect: "",
-  certification_status: "no",
-  certification_file: null,
-  fullname: "",
+  certification: null,
+  fullName: "",
   ageSelect: "",
   genderSelect: "",
   portfolio: [],
@@ -24,18 +23,31 @@ const formData = {
   mobile2: "",
   acceptTerms: false,
   "aadhar-number": "",
-  aadhar_front: null,
-  aadhar_back: null,
+  "aadhar-front": null,
+  "aadhar-back": null,
 };
 
 // --- Initialization ---
 
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM Content Loaded - Initializing App");
   loadDraft();
   initApp();
 });
 
+// Fallback if DOMContentLoaded already fired (common with modules)
+if (document.readyState === "complete" || document.readyState === "interactive") {
+  if (!window.__app_initialized) {
+    console.log("Direct Initializing (fallback)");
+    loadDraft();
+    initApp();
+  }
+}
+
 function initApp() {
+  if (window.__app_initialized) return;
+  window.__app_initialized = true;
+
   updateStepper();
   populateAgeOptions();
   bindRoleCards();
@@ -43,6 +55,7 @@ function initApp() {
   bindStepButtons();
   bindFileInputs();
   bindFormInputs();
+  bindProgressSteps();
 
   initCustomSelects((name, value) => {
     formData[name] = value;
@@ -57,7 +70,7 @@ function bindRoleCards() {
     card.addEventListener("click", () => {
       const type = card.dataset.value;
       formData.business_type = type;
-      $all(".option-card").forEach((c) => c.classList.remove("selected"));
+      $all(".option-card[data-value='service_provider'], .option-card[data-value='destination']").forEach((c) => c.classList.remove("selected"));
       card.classList.add("selected");
       saveDraft();
     });
@@ -65,133 +78,129 @@ function bindRoleCards() {
 }
 
 function bindCategoryCards() {
-  $all(".option-card[data-value='nailcare'], .option-card[data-value='haircare'], .option-card[data-value='henna'], .option-card[data-value='facial'], .option-card[data-value='pedimani']").forEach((card) => {
-    card.addEventListener("click", () => {
-      const cat = card.dataset.value;
-      if (formData.categories.includes(cat)) {
-        formData.categories = formData.categories.filter((c) => c !== cat);
-        card.classList.remove("selected");
-      } else {
-        formData.categories.push(cat);
-        card.classList.add("selected");
-      }
-      saveDraft();
-    });
+  const cats = ['nailcare', 'haircare', 'henna', 'facial', 'pedimani'];
+  $all(".option-card").forEach((card) => {
+    if (cats.includes(card.dataset.value)) {
+      card.addEventListener("click", () => {
+        const cat = card.dataset.value;
+        if (formData.categories.includes(cat)) {
+          formData.categories = formData.categories.filter((c) => c !== cat);
+          card.classList.remove("selected");
+        } else {
+          formData.categories.push(cat);
+          card.classList.add("selected");
+        }
+        saveDraft();
+      });
+    }
   });
 }
 
 function bindStepButtons() {
-  $all(".btn-next").forEach((btn) => {
-    btn.addEventListener("click", async () => {
+  const nextBtn = $("#next-btn");
+  const backBtn = $("#back-btn");
+
+  if (nextBtn) {
+    nextBtn.addEventListener("click", async () => {
+      console.log("Next Clicked - Current Step:", currentStep);
       if (validateStep(currentStep)) {
-        if (currentStep === 3) {
-          moveNext();
-        } else if (currentStep === 4) {
+        if (currentStep === 4) {
           await finalizeRegistration();
         } else {
           moveNext();
         }
       }
     });
-  });
+  }
 
-  $all(".btn-back").forEach((btn) => {
-    btn.addEventListener("click", () => {
+  if (backBtn) {
+    backBtn.addEventListener("click", () => {
+      console.log("Back Clicked");
       moveBack();
+    });
+  }
+
+  const saveBtn = $("#save-draft-btn");
+  if (saveBtn) {
+    saveBtn.addEventListener("click", () => {
+      saveDraft();
+      showToast("Draft saved successfully.");
+    });
+  }
+}
+
+function bindProgressSteps() {
+  $all(".step-list li").forEach((li) => {
+    li.style.cursor = "pointer";
+    li.addEventListener("click", () => {
+      const target = parseInt(li.dataset.step);
+      if (target < currentStep) {
+        currentStep = target;
+        updateStepper();
+      }
     });
   });
 }
 
 function bindFormInputs() {
-  // Mobile numbers
   const m1 = $("#mobile1");
   const m2 = $("#mobile2");
   if (m1) m1.addEventListener("input", (e) => { formData.mobile1 = e.target.value; saveDraft(); });
   if (m2) m2.addEventListener("input", (e) => { formData.mobile2 = e.target.value; saveDraft(); });
 
-  // Full Name
   const fn = $("#fullName");
-  if (fn) fn.addEventListener("input", (e) => { formData.fullname = e.target.value; saveDraft(); });
+  if (fn) fn.addEventListener("input", (e) => { formData.fullName = e.target.value; saveDraft(); });
 
-  // Terms Checkbox
   const termsCb = $("#acceptTerms");
   if (termsCb) termsCb.addEventListener("change", (e) => { formData.acceptTerms = e.target.checked; saveDraft(); });
 
-  // Aadhar Number
   const aadharNum = $("#aadhar-number");
   if (aadharNum) aadharNum.addEventListener("input", (e) => { formData["aadhar-number"] = e.target.value; saveDraft(); });
 }
 
 function bindFileInputs() {
-  // Certification
   const certInput = $("#certification");
   if (certInput) certInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
     if (file) {
       const check = validateFile(file);
-      if (!check.valid) {
-        showToast(check.error);
-        certInput.value = "";
-        return;
-      }
-      formData.certification_file = file;
+      if (!check.valid) { showToast(check.error); certInput.value = ""; return; }
+      formData.certification = file;
       renderCertificationPreview(file);
     }
   });
 
-  // Portfolio
   const portfolioInput = $("#portfolio");
   if (portfolioInput) portfolioInput.addEventListener("change", (e) => {
     const files = Array.from(e.target.files);
     files.forEach(file => {
-      if (formData.portfolio.length >= PORTFOLIO_MAX) {
-        showToast(`Maximum ${PORTFOLIO_MAX} images allowed.`);
-        return;
-      }
-      const check = validateFile(file);
-      if (!check.valid) {
-        showToast(file.name + ": " + check.error);
-        return;
-      }
+      if (formData.portfolio.length >= PORTFOLIO_MAX) return;
+      if (!validateFile(file).valid) return;
       formData.portfolio.push(file);
     });
     renderPortfolioPreviews();
     portfolioInput.value = "";
   });
 
-  // Aadhar Front
-  const aadharFrontInput = $("#aadhar-front");
-  if (aadharFrontInput) aadharFrontInput.addEventListener("change", (e) => {
+  const aadharFront = $("#aadhar-front");
+  if (aadharFront) aadharFront.addEventListener("change", (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const check = validateFile(file);
-      if (!check.valid) {
-        showToast(check.error);
-        aadharFrontInput.value = "";
-        return;
-      }
-      formData.aadhar_front = file;
+    if (file && validateFile(file).valid) {
+      formData["aadhar-front"] = file;
       renderAadharPreview("front", file, () => {
-        formData.aadhar_front = null;
+        formData["aadhar-front"] = null;
         renderAadharPreview("front", null);
       });
     }
   });
 
-  // Aadhar Back
-  const aadharBackInput = $("#aadhar-back");
-  if (aadharBackInput) aadharBackInput.addEventListener("change", (e) => {
+  const aadharBack = $("#aadhar-back");
+  if (aadharBack) aadharBack.addEventListener("change", (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const check = validateFile(file);
-      if (!check.valid) {
-        showToast(check.error);
-        aadharBackInput.value = "";
-        return;
-      }
-      formData.aadhar_back = file;
+    if (file && validateFile(file).valid) {
+      formData["aadhar-back"] = file;
       renderAadharPreview("back", file, () => {
-        formData.aadhar_back = null;
+        formData["aadhar-back"] = null;
         renderAadharPreview("back", null);
       });
     }
@@ -218,6 +227,7 @@ function moveBack() {
 }
 
 function updateStepper() {
+  console.log("Updating UI to Step:", currentStep);
   $all(".step").forEach((step) => {
     const s = parseInt(step.id.split("-")[1]);
     step.classList.toggle("active", s === currentStep);
@@ -238,7 +248,7 @@ function updateStepper() {
   const title = $("#step-title");
   if (title) {
     const titles = ["Basic Information", "Portfolio & Contact", "Review & Terms", "Aadhar Verification"];
-    title.textContent = titles[currentStep - 1];
+    title.textContent = titles[currentStep - 1] || "Registration";
   }
 }
 
@@ -252,6 +262,7 @@ function validateStep(stepId) {
   $all(".form-field").forEach(el => el.classList.remove("error"));
 
   if (Object.keys(errors).length > 0) {
+    console.warn("Validation failed for step", stepId, errors);
     Object.entries(errors).forEach(([field, msg]) => {
       showStepError(stepId, field, msg);
     });
@@ -301,7 +312,7 @@ async function finalizeRegistration() {
 function renderCertificationPreview(file) {
   const preview = $("#certificationPreview");
   if (!preview) return;
-  preview.innerHTML = `<span class="file-name">${file.name}</span>`;
+  preview.innerHTML = `<span class="file-name">${file.name} (Ready)</span>`;
   preview.classList.remove("hidden");
 }
 
@@ -309,7 +320,6 @@ function renderPortfolioPreviews() {
   const container = $("#portfolioPreview");
   if (!container) return;
   container.innerHTML = "";
-
   formData.portfolio.forEach((file, index) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -335,8 +345,8 @@ function renderReviewStep() {
   if (profile) {
     profile.innerHTML = `
       <dt>Role</dt><dd>${formatLabel(formData.business_type)}</dd>
-      <dt>Experience</dt><dd>${formData.experienceSelect} years</dd>
-      <dt>Name</dt><dd>${formData.fullname}</dd>
+      <dt>Experience</dt><dd>${formData.experienceSelect || 'Not selected'} years</dd>
+      <dt>Name</dt><dd>${formData.fullName}</dd>
       <dt>Age & Gender</dt><dd>${formData.ageSelect} / ${formatLabel(formData.genderSelect)}</dd>
     `;
   }
@@ -348,7 +358,6 @@ function renderReviewStep() {
   if (contact) {
     contact.innerHTML = `<dt>Phone</dt><dd>${formData.mobile1}${formData.mobile2 ? " / " + formData.mobile2 : ""}</dd>`;
   }
-
   const portThumbs = $("#reviewPortfolioThumbs");
   const portCount = $("#reviewPortfolioCount");
   if (portThumbs && portCount) {
@@ -370,21 +379,19 @@ function renderReviewStep() {
 
 function saveDraft() {
   const draftData = { ...formData };
-  delete draftData.certification_file;
+  delete draftData.certification;
   delete draftData.portfolio;
-  delete draftData.aadhar_front;
-  delete draftData.aadhar_back;
-
-  persist("registration_draft", { currentStep, data: draftData });
+  delete draftData["aadhar-front"];
+  delete draftData["aadhar-back"];
+  persist("registration_draft", { currentStep: parseInt(currentStep), data: draftData });
 }
 
 function loadDraft() {
   const saved = hydrate("registration_draft");
   if (saved) {
-    currentStep = saved.currentStep;
+    currentStep = parseInt(saved.currentStep) || 1;
     Object.assign(formData, saved.data);
 
-    // Sync UI
     if (formData.business_type) {
       const card = $(`.option-card[data-value="${formData.business_type}"]`);
       if (card) card.classList.add("selected");
@@ -394,14 +401,13 @@ function loadDraft() {
       if (card) card.classList.add("selected");
     });
 
-    if ($("#fullName")) $("#fullName").value = formData.fullname || "";
+    if ($("#fullName")) $("#fullName").value = formData.fullName || "";
     if ($("#mobile1")) $("#mobile1").value = formData.mobile1 || "";
     if ($("#mobile2")) $("#mobile2").value = formData.mobile2 || "";
     if ($("#aadhar-number")) $("#aadhar-number").value = formData["aadhar-number"] || "";
     if ($("#acceptTerms")) $("#acceptTerms").checked = formData.acceptTerms || false;
 
-    const selects = ["experienceSelect", "ageSelect", "genderSelect"];
-    selects.forEach(id => {
+    ["experienceSelect", "ageSelect", "genderSelect"].forEach(id => {
       const el = $(`#${id}`);
       if (el && formData[id]) el.value = formData[id];
     });
